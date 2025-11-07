@@ -5,6 +5,7 @@ import Link from "next/link";
 import DotGrid from "../components/DotGrid";
 import CountUp from "../components/ui/CountUp";
 import ProgressBanner from "../components/ProgressBanner";
+import Logo from "../components/Logo";
 import { getForkManifest } from "../lib/manifest";
 import { EIPMetadata } from "../types";
 import { config } from "../config/app";
@@ -79,16 +80,7 @@ export default function Home() {
       <div className="relative z-10 max-w-7xl mx-auto p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8">
         {/* Header */}
         <div className="text-center pt-2">
-          <Link href="/" className="inline-flex items-center gap-3 justify-center">
-            <img
-              src="/img/butterfly.png"
-              alt="Butterfly"
-              className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
-            />
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 hover:text-lime-500 dark:hover:text-lime-400 transition-colors">
-              Butterfly
-            </h1>
-          </Link>
+          <Logo size="large" />
         </div>
 
         {/* Hero Section - City Silhouette */}

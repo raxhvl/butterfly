@@ -2,7 +2,7 @@ import { Test, Client, EIPMetadata } from "../types";
 import { buildEIPAdoptionData, formatDate } from "../lib/utils";
 import { config } from "../config/app";
 import CountUp from "./ui/CountUp";
-import Link from "next/link";
+import Logo from "./Logo";
 
 interface AdoptionSummaryProps {
   tests: Test[];
@@ -33,16 +33,7 @@ export default function AdoptionSummary({
     <div className="rounded-2xl border border-white/30 dark:border-gray-500/40 bg-white/5 dark:bg-gray-900/10 backdrop-blur-xl shadow-2xl p-8">
       {/* Title Section */}
       <div className="text-center mb-6">
-        <Link href="/" className="inline-flex items-center gap-3 justify-center">
-          <img
-            src="/img/butterfly.png"
-            alt="Butterfly"
-            className="w-12 h-12 object-contain"
-          />
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 hover:text-lime-500 dark:hover:text-lime-400 transition-colors cursor-pointer">
-            Butterfly
-          </h1>
-        </Link>
+        <Logo size="large" />
         {eipMetadata && (
           <p className="text-base text-gray-700 dark:text-gray-300 mt-4">
             <a
