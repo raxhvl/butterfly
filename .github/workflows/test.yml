@@ -54,7 +54,7 @@ jobs:
       - name: Check for changes
         id: changes
         run: |
-          if git diff --quiet src/data/test_results.json; then
+          if git diff --quiet src/data/forks/; then
             echo "changed=false" >> $GITHUB_OUTPUT
             echo "📋 No changes detected in test results"
           else
@@ -68,8 +68,7 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
 
-          git add src/data/test_results.json
-          git add src/data/clients.json
+          git add src/data/forks/
 
           git commit -m "🚥 ci: Test results updated"
 
