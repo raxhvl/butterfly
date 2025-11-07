@@ -2,7 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { parse as parseYaml } from 'yaml';
 import { Client, Test, TestResults } from '../src/types/index';
-import { Simulation } from '../src/config/app';
+import { Simulation, config } from '../src/config/app';
+import { getEIPFilePaths } from '../src/lib/manifest';
 
 interface HiveTestCase {
   name: string;
@@ -59,37 +60,37 @@ interface HiveClientConfig {
   };
 }
 
-function loadHiveClientConfigs(): Record<string, string> {
-  const hiveClientsPath = path.join(process.cwd(), 'src', 'data', 'hive_clients.yml');
-  const hiveClientsRaw = fs.readFileSync(hiveClientsPath, 'utf8');
-  const hiveClients = parseYaml(hiveClientsRaw) as HiveClientConfig[];
+function loadEIPClientConfigs(clientsYmlPath: string): Record<string, { version: string; repo: string }> {
+  const clientsYmlRaw = fs.readFileSync(clientsYmlPath, 'utf8');
+  const clientConfigs = parseYaml(clientsYmlRaw) as HiveClientConfig[];
 
-  const githubRepos: Record<string, string> = {};
-  hiveClients.forEach(config => {
-    githubRepos[config.client] = `https://github.com/${config.build_args.github}/tree/${config.build_args.tag}`;
+  const clientInfo: Record<string, { version: string; repo: string }> = {};
+  clientConfigs.forEach(config => {
+    clientInfo[config.client] = {
+      version: "unknown",
+      repo: `https://github.com/${config.build_args.github}/tree/${config.build_args.tag}`
+    };
   });
 
-  return githubRepos;
+  return clientInfo;
 }
 
-function updateClientVersions(clientVersions: Record<string, string>) {
-  const clientsPath = path.join(process.cwd(), 'src', 'data', 'clients.json');
-  const clientsRaw = fs.readFileSync(clientsPath, 'utf8');
-  const clients: Client[] = JSON.parse(clientsRaw);
+function updateEIPClientInfo(
+  clientsYmlPath: string,
+  hiveClientVersions: Record<string, string>
+): Record<string, { version: string; repo: string }> {
+  const clientInfo = loadEIPClientConfigs(clientsYmlPath);
+  const CLIENT_MAPPINGS = loadClientMappings();
 
-  // Load GitHub repo information from hive_clients.yml
-  const githubRepos = loadHiveClientConfigs();
+  // Update versions from hive results
+  Object.entries(hiveClientVersions).forEach(([hiveClientName, version]) => {
+    const clientId = CLIENT_MAPPINGS[hiveClientName];
+    if (clientId && clientInfo[hiveClientName]) {
+      clientInfo[hiveClientName].version = version;
+    }
+  });
 
-  // Update clients with version and GitHub repo information
-  const updatedClients = clients.map(client => ({
-    ...client,
-    version: clientVersions[client.hiveName] || "unknown",
-    githubRepo: githubRepos[client.hiveName]
-  }));
-
-  // Write updated clients back to file
-  fs.writeFileSync(clientsPath, JSON.stringify(updatedClients, null, 2));
-  console.log('✅ Updated clients.json with version and GitHub repository information');
+  return clientInfo;
 }
 
 const CLIENT_MAPPINGS = loadClientMappings();
@@ -270,8 +271,10 @@ function mapHiveResultToTestResult(
 
 export async function parseHiveResults(simulationType: Simulation, forkName: string, eipNumber: string) {
   const webDir = process.cwd();
-  const hiveDir = path.join(webDir, '.hive', simulationType, eipNumber);
-  const testResultsPath = path.join(webDir, 'src', 'data', 'forks', forkName, eipNumber, 'results.json');
+  const eipPaths = getEIPFilePaths(forkName, eipNumber);
+  const hiveDir = path.join(webDir, config.hive.outputDir, eipNumber, simulationType);
+  const testResultsPath = path.join(webDir, eipPaths.resultsJson);
+  const clientsYmlPath = path.join(webDir, eipPaths.clientsYml);
 
   // Find hive results file
   const hiveResultsPath = findHiveResultsFile(hiveDir);
@@ -294,11 +297,14 @@ export async function parseHiveResults(simulationType: Simulation, forkName: str
     console.log(`Hive description: ${hiveResults.description}`);
     console.log(`Current test spec: ${testResults.spec}`);
 
-    // Update client versions
-    updateClientVersions(hiveResults.clientVersions);
+    // Update client info from per-EIP clients.yml and hive results
+    const clientInfo = updateEIPClientInfo(clientsYmlPath, hiveResults.clientVersions);
 
     // Parse and update results
     const updatedResults = mapHiveResultToTestResult(hiveResults, testResults, simulationType);
+
+    // Add client info to results
+    updatedResults.clients = clientInfo;
 
     // Write updated results
     fs.writeFileSync(

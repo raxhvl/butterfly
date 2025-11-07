@@ -25,5 +25,7 @@ export const config = {
 	hive: {
 		// See: https://eest.ethereum.org/main/running_tests/hive/common_options/
 		parallelism: 4,
+		// Hive output directory structure: .hive/{eipNumber}/{simulation}
+		outputDir: '.hive',
 	},
 };

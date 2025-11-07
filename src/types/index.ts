@@ -33,9 +33,15 @@ export interface Client {
   githubRepo?: string;
 }
 
+export interface ClientInfo {
+  version: string;
+  repo: string;
+}
+
 export interface TestResults {
   spec: string;
   lastUpdated: string;
+  clients?: Record<string, ClientInfo>;
   tests: Test[];
 }
 

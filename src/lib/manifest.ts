@@ -1,5 +1,17 @@
 import { ForkManifest, EIPMetadata, TestResults } from '../types';
 
+export interface EIPFilePaths {
+  clientsYml: string;
+  resultsJson: string;
+}
+
+export function getEIPFilePaths(forkName: string, eipNumber: string): EIPFilePaths {
+  return {
+    clientsYml: `src/data/forks/${forkName}/${eipNumber}/clients.yml`,
+    resultsJson: `src/data/forks/${forkName}/${eipNumber}/results.json`
+  };
+}
+
 export function getForkManifest(forkName: string): ForkManifest {
   try {
     const manifest = require(`../data/forks/${forkName}/manifest.json`);

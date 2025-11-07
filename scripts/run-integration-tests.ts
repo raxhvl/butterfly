@@ -32,19 +32,21 @@ async function verifyHiveInstallation() {
  * Clears the .hive directory to ensure clean test runs
  */
 async function clearHiveDirectory(eipNumber?: string) {
-	const hiveResultsPath = path.resolve(__dirname, "../.hive");
+	const hiveResultsPath = path.resolve(__dirname, `../${config.hive.outputDir}`);
 
 	if (eipNumber) {
 		console.log(`🧹 Clearing hive results for EIP-${eipNumber}...`);
+		const eipPath = path.join(hiveResultsPath, eipNumber);
+		if (fs.existsSync(eipPath)) {
+			fs.rmSync(eipPath, { recursive: true, force: true });
+		}
 	} else {
 		console.log("🧹 Clearing hive results directory...");
+		if (fs.existsSync(hiveResultsPath)) {
+			fs.rmSync(hiveResultsPath, { recursive: true, force: true });
+		}
+		fs.mkdirSync(hiveResultsPath, { recursive: true });
 	}
-
-	if (fs.existsSync(hiveResultsPath)) {
-		fs.rmSync(hiveResultsPath, { recursive: true, force: true });
-	}
-
-	fs.mkdirSync(hiveResultsPath, { recursive: true });
 }
 
 /**
@@ -57,7 +59,7 @@ async function runHiveSimulation(
 	clientsPath: string,
 	hiveConfig: { buildArgs: { fixtures: string; branch: string }; testFilter: string }
 ) {
-	const hiveResultsPath = path.resolve(__dirname, "../.hive", simulation, eipNumber);
+	const hiveResultsPath = path.resolve(__dirname, `../${config.hive.outputDir}`, eipNumber, simulation);
 
 	// Create simulation-specific directory
 	fs.mkdirSync(hiveResultsPath, { recursive: true });
