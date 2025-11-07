@@ -26,8 +26,8 @@ export default function AdoptionSummary({
     clients
   );
 
-  // Extract version from config
-  const testVersion = config.hive.buildArgs.fixtures.split("@")[1] || "unknown";
+  // Extract version from EIP metadata's hive config
+  const testVersion = eipMetadata?.hive?.buildArgs?.fixtures?.split("@")[1] || "unknown";
 
   return (
     <div className="rounded-2xl border border-white/30 dark:border-gray-500/40 bg-white/5 dark:bg-gray-900/10 backdrop-blur-xl shadow-2xl p-8">
