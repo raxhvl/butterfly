@@ -1,37 +1,37 @@
 {
-  "name": "Glamsterdam",
-  "description": "Glamsterdam network upgrade fork",
-  "banner": "/img/forks/amsterdam.jpg",
-  "eips": [
-    {
-      "number": "7928",
-      "title": "Block Access Lists",
-      "description": "Enables ethereum to process multiple transaction simultaneously",
-      "spec": "https://eips.ethereum.org/EIPS/eip-7928",
-      "testCases": "https://github.com/ethereum/execution-specs/blob/eips/amsterdam/eip-7928/tests/amsterdam/eip7928_block_level_access_lists/test_cases.md",
-      "skip": false,
-      "hive": {
-        "buildArgs": {
-          "fixtures": "bal@v1.3.0",
-          "branch": "eips/amsterdam/eip-7928"
-        },
-        "testFilter": "id:tests/amsterdam/eip7928_block_level_access_lists"
-      }
-    },
-    {
-      "number": "7805",
-      "title": "Fork-choice enforced Inclusion Lists (FOCIL)",
-      "description": "Enforces inclusion of transactions",
-      "spec": "https://eips.ethereum.org/EIPS/eip-7805",
-      "testCases": "",
-      "skip": true,
-      "hive": {
-        "buildArgs": {
-          "fixtures": "",
-          "branch": ""
-        },
-        "testFilter": ""
-      }
-    }
-  ]
+	"name": "Glamsterdam",
+	"description": "Glamsterdam network upgrade fork",
+	"banner": "/img/forks/amsterdam.jpg",
+	"eips": [
+		{
+			"number": "7928",
+			"title": "Block Access Lists",
+			"description": "Enables ethereum to process multiple transaction simultaneously",
+			"spec": "https://eips.ethereum.org/EIPS/eip-7928",
+			"testCases": "https://github.com/ethereum/execution-specs/blob/eips/amsterdam/eip-7928/tests/amsterdam/eip7928_block_level_access_lists/test_cases.md",
+			"skip": false,
+			"hive": {
+				"buildArgs": {
+					"fixtures": "bal@v1.4.1",
+					"branch": "eips/amsterdam/eip-7928"
+				},
+				"testFilter": "id:tests/amsterdam/eip7928_block_level_access_lists"
+			}
+		},
+		{
+			"number": "7805",
+			"title": "Fork-choice enforced Inclusion Lists (FOCIL)",
+			"description": "Enforces inclusion of transactions",
+			"spec": "https://eips.ethereum.org/EIPS/eip-7805",
+			"testCases": "",
+			"skip": true,
+			"hive": {
+				"buildArgs": {
+					"fixtures": "",
+					"branch": ""
+				},
+				"testFilter": ""
+			}
+		}
+	]
 }
