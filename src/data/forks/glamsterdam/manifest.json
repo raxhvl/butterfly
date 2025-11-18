@@ -12,7 +12,7 @@
 			"skip": false,
 			"hive": {
 				"buildArgs": {
-					"fixtures": "bal@v1.5.0",
+					"fixtures": "bal@v1.5.1",
 					"branch": "eips/amsterdam/eip-7928"
 				},
 				"testFilter": "id:tests/amsterdam/eip7928_block_level_access_lists"
