@@ -23,7 +23,7 @@
   build_args:
     github: erigontech/erigon
     tag: bal-devnet-1
-- client: nimbus
+- client: nimbus-el
   dockerfile: git
   build_args:
     github: status-im/nimbus-eth1
