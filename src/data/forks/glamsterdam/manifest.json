@@ -19,9 +19,9 @@
 			}
 		},
 		{
-			"number": "7805",
-			"title": "Fork-choice enforced Inclusion Lists (FOCIL)",
-			"description": "Enforces inclusion of transactions",
+			"number": "7732",
+			"title": "Enshrined Proposer-Builder Separation",
+			"description": "Separates the ethereum block in consensus and execution parts, adds a mechanism for the consensus proposer to choose the execution proposer.",
 			"spec": "https://eips.ethereum.org/EIPS/eip-7805",
 			"testCases": "",
 			"skip": true,
