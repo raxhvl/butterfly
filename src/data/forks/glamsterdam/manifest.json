@@ -12,7 +12,7 @@
 			"skip": false,
 			"hive": {
 				"buildArgs": {
-					"fixtures": "bal@v1.8.0",
+					"fixtures": "bal@v2.0.0",
 					"branch": "eips/amsterdam/eip-7928"
 				},
 				"testFilter": "id:tests/amsterdam/eip7928_block_level_access_lists"
@@ -22,7 +22,7 @@
 			"number": "7732",
 			"title": "Enshrined Proposer-Builder Separation",
 			"description": "Separates the ethereum block in consensus and execution parts, adds a mechanism for the consensus proposer to choose the execution proposer.",
-			"spec": "https://eips.ethereum.org/EIPS/eip-7805",
+			"spec": "https://eips.ethereum.org/EIPS/eip-7732",
 			"testCases": "",
 			"skip": true,
 			"hive": {
