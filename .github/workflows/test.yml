@@ -18,7 +18,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fre up disk space
+      - name: Free up disk space
         run: |
           echo "=============================================================================="
           echo "Freeing up disk space on CI system"
