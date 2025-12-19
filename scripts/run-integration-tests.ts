@@ -2,7 +2,7 @@
 
 import fs from "node:fs";
 import path from "node:path";
-import { exec } from "node:child_process";
+import { exec, spawn } from "node:child_process";
 import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 import { config } from "../src/config/app";
@@ -64,30 +64,67 @@ async function runHiveSimulation(
 	// Create simulation-specific directory
 	fs.mkdirSync(hiveResultsPath, { recursive: true });
 
-	const hiveCommand = [
-		`./hive --sim ${simulation}`,
+	const hiveArgs = [
+		"--sim", simulation,
 		`--client-file=${clientsPath}`,
-		`--sim.buildarg fixtures=${hiveConfig.buildArgs.fixtures}`,
-		`--sim.buildarg branch=${hiveConfig.buildArgs.branch}`,
+		"--sim.buildarg", `fixtures=${hiveConfig.buildArgs.fixtures}`,
+		"--sim.buildarg", `branch=${hiveConfig.buildArgs.branch}`,
 		"--docker.output",
-		`--results-root ${hiveResultsPath}`,
-		`--sim.limit "${hiveConfig.testFilter}"`,
-		`--sim.parallelism ${config.hive.parallelism}`,
-		"2>/dev/null", // Redirect output to prevent maxBuffer overflow
-	].join(" \\\n  ");
+		"--results-root", hiveResultsPath,
+		"--sim.limit", hiveConfig.testFilter,
+		"--sim.parallelism", config.hive.parallelism.toString(),
+	];
 
 	console.log(`   🚀 Running Hive simulation: ${simulation}`);
-	console.log(`   Command: ${hiveCommand}`);
+	console.log(`   Command: ./hive ${hiveArgs.join(" ")}`);
 
-	try {
-		const { stdout, stderr } = await execAsync(hiveCommand, {
+	return new Promise<void>((resolve) => {
+		const child = spawn("./hive", hiveArgs, {
 			cwd: HIVE_REPO_PATH,
+			stdio: ['ignore', 'pipe', 'pipe'],
 		});
-	} catch (error: any) {
-		// console.err(
-		// 	`❌ Error running Hive Simulation ${simulation} [error: ${error.message}]`,
-		// );
-	}
+
+		// Ring buffer to keep last 50 lines
+		const ringBuffer: string[] = [];
+		const BUFFER_SIZE = 50;
+
+		const addLine = (line: string) => {
+			if (line.trim()) {
+				ringBuffer.push(line);
+				if (ringBuffer.length > BUFFER_SIZE) {
+					ringBuffer.shift();
+				}
+			}
+		};
+
+		child.stdout?.on('data', (data) => {
+			data.toString().split('\n').forEach(addLine);
+		});
+
+		child.stderr?.on('data', (data) => {
+			data.toString().split('\n').forEach(addLine);
+		});
+
+		child.on('error', (error) => {
+			console.error(`❌ Error running Hive Simulation ${simulation}: ${error.message}`);
+			if (ringBuffer.length > 0) {
+				console.error(`Last ${ringBuffer.length} lines of output:`);
+				console.error(ringBuffer.join('\n'));
+			}
+			resolve(); // Continue execution
+		});
+
+		child.on('close', (code) => {
+			if (code !== 0) {
+				console.error(`❌ Hive Simulation ${simulation} exited with code ${code}`);
+				if (ringBuffer.length > 0) {
+					console.error(`Last ${ringBuffer.length} lines of output:`);
+					console.error(ringBuffer.join('\n'));
+				}
+			}
+			resolve(); // Continue execution regardless of exit code
+		});
+	});
 }
 
 /**
