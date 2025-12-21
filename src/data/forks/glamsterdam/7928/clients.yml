@@ -18,11 +18,12 @@
   build_args:
     github: hyperledger/besu
     tag: bal-devnet-1
-- client: erigon
-  dockerfile: git
-  build_args:
-    github: erigontech/erigon
-    tag: bal-devnet-1
+# - client: erigon
+#   dockerfile: git
+#   build_args:
+#     github: erigontech/erigon
+#     tag: bal-devnet-1
+# Disable nimbus EL for now
 # - client: nimbus-el
 #   dockerfile: git
 #   build_args:
